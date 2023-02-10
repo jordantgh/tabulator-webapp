@@ -1,7 +1,8 @@
+let fields = document.querySelectorAll("input");
 let addButton = document.querySelector(".add-button");
 let addRowButton = document.querySelector(".add-row-button");
 let firstRowFields = document.querySelectorAll("#field-row-1 > .input-field");
-let fields = document.querySelectorAll("input");
+let firstRowWidth = document.querySelector("#field-row-1").offsetWidth;
 let root = document.querySelector(":root");
 let row = 1;
 
@@ -29,15 +30,19 @@ const createField = (event) => {
 
   // If this is not the first row, check if the number of input fields
   // is less than in the first row. If so, add a new input field.
-  if (row === 1 || (row > 1 && inputGroup.querySelectorAll(".input-field").length < firstRowFields.length)) {
+  if (row === 1 || (row > 1 &&
+    inputGroup.querySelectorAll(".input-field")
+    .length < firstRowFields.length)) {
     inputGroup.appendChild(instantiateField("input-field"));
   }
 
+  firstRowWidth = document.querySelector("#field-row-1").offsetWidth;
   firstRowFields = document.querySelectorAll("#field-row-1 > .input-field");
-  checkAddButton();
-
+  
+  root.style.setProperty("--r1width", firstRowWidth + "px");
   root.style.setProperty("--r1cols", firstRowFields.length);
 
+  checkAddButton();
 };
 
 const createRow = () => {
@@ -51,12 +56,10 @@ const createRow = () => {
 
   // Add a new field-container div
   const vFieldContainer = document.createElement("div");
+  vInputGroup.appendChild(instantiateField("variable-field"));
   vInputGroup.appendChild(vFieldContainer);
   vFieldContainer.classList.add("field-container");
   vFieldContainer.id = `field-row-${row}`;
-
-  // Add a variable-field div
-  vFieldContainer.appendChild(instantiateField("variable-field"));
 
   // Add the input field
   vFieldContainer.appendChild(instantiateField("input-field"));
@@ -81,15 +84,12 @@ addButton.addEventListener("click", function (event) {
 
 addRowButton.addEventListener("click", createRow);
 
-// For each row, check if the number of input fields is 
-// less than in the first row. If not, remove the addButton
 const checkAddButton = () => {
   const rows = document.querySelectorAll(".field-container");
   rows.forEach((row, idx) => {
     if (idx > 0) {
     const fields = row.querySelectorAll(".input-field");
     const addButton = document.querySelector("#btn-row-" + (idx + 1));
-    console.log(`row ${idx + 1} length: ${fields.length}`);
     if (fields.length < firstRowFields.length) {
       addButton.style.visibility = "visible";
     } else {
@@ -98,7 +98,6 @@ const checkAddButton = () => {
   }
   });
 };
-
 
 let rowsArr = [];
 // Iterate through the rows and create an array of arrays
