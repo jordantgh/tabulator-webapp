@@ -1,5 +1,5 @@
 :root {
-  --r1cols: 1;
+  --r1width: 117px;
 }
 
 * {
@@ -13,72 +13,94 @@
 }
 
 #container {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-  }
-  
-  .input-group {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-top: 5px;
-    margin-left: 5px;
-  }
-  
-  .input-field {
-    width: 100px;
-    height: 30px;
-    padding: 5px;
-    border: 1px solid black;
-    border-radius: 5px;
-    margin-right: 5px;
-    display: block;
-    float: left;
-  }
-  
-  .variable-field {
-    width: 100px;
-    height: 30px;
-    padding: 5px;
-    border: 1px solid rgba(175, 175, 175, 0.795);
-    border-radius: 3px;
-    margin-right: 15px;
-    display: block;
-    float: left;
-  }
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
 
-  .add-button {
-    width: 20px;
-    height: 20px;
-    border: 1px solid black;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 20px;
-  }
-  
-  .add-row-button {
-    width: 20px;
-    height: 20px;
-    border: 1px solid black;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 20px;
-    margin-left: 10px;
-    margin-top: 10px;
-  }
+input {
+  text-align: center;
+}
 
-  .dataframe {
-    border-collapse: collapse;
-    margin: 25px 0;
-    font-size: 0.9em;
-    font-family: sans-serif;
-    min-width: 400px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+.input-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 5px;
+  margin-left: 5px;
+}
+
+.variable-field {
+  width: 100px;
+  height: 30px;
+  padding: 5px;
+  border: 1px solid rgba(175, 175, 175, 0.795);
+  border-radius: 3px;
+  margin-right: 15px;
+  display: block;
+  float: left;
+}
+
+.input-field {
+  height: 30px;
+  padding: 5px;
+  border: 1px solid black;
+  border-radius: 5px;
+  margin-right: 5px;
+  display: block;
+  float: left;
+}
+
+.field-container.longest-row .input-field {
+  width: 100px;
+}
+
+.field-container:not(.longest-row) {
+  width: var(--r1width);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.field-container:not(.longest-row)> :not(:last-child) {
+  width: 100px;
+}
+
+.field-container:not(.longest-row)> :last-child {
+  width: 100%;
+}
+
+.add-button {
+  width: 20px;
+  height: 20px;
+  border: 1px solid black;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+}
+
+.add-row-button {
+  width: 20px;
+  height: 20px;
+  border: 1px solid black;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  margin-left: 10px;
+  margin-top: 10px;
+}
+
+.dataframe {
+  border-collapse: collapse;
+  margin: 25px 0;
+  font-size: 0.9em;
+  font-family: sans-serif;
+  min-width: 400px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
 
 .dataframe thead tr {
@@ -88,7 +110,7 @@
 
 .dataframe th,
 .dataframe td {
-    padding: 12px 15px;
+  padding: 12px 15px;
 }
 
 .dataframe tbody tr {

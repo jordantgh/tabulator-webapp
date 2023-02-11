@@ -1,17 +1,35 @@
 let fields = document.querySelectorAll("input");
 let addButton = document.querySelector(".add-button");
 let addRowButton = document.querySelector(".add-row-button");
-let firstRowFields = document.querySelectorAll("#field-row-1 > .input-field");
-let firstRowWidth = document.querySelector("#field-row-1").offsetWidth;
 let root = document.querySelector(":root");
-let row = 1;
+let numRows = 1;
+let maxRowWidth = 0;
 
-// function to instantiate a field, add class and event listener and return it
+const getLongestRow = () => {
+  const allRows = document.querySelectorAll(".field-container");
+  let longestRowFields = 0;
+  let longestRowNode;
+  allRows.forEach((row) => {
+    let numFields = row.querySelectorAll(".input-field").length;
+    if (numFields > longestRowFields) {
+      longestRowFields = numFields;
+      longestRowNode = row;
+    }
+  });
+
+  allRows.forEach((row) => {
+    row.classList.remove("longest-row");
+  });
+  longestRowNode.classList.add("longest-row");
+  maxRowWidth = longestRowNode.offsetWidth;
+  root.style.setProperty("--r1width", maxRowWidth + "px");
+};
+
 const instantiateField = (className) => {
   const field = document.createElement("input");
   field.type = "text";
   field.classList.add(className);
-  field.addEventListener("change", () => {
+  field.addEventListener("input", () => {
     createArray();
     sendData();
   });
@@ -19,63 +37,40 @@ const instantiateField = (className) => {
 };
 
 const createField = (event) => {
-  // Get the id of the button that was clicked
   const id = event.target.id;
+  const currentRow = +id.substring(id.length - 1);
+  const fieldContainer = document.querySelector(`#field-row-${currentRow}`);
+  fieldContainer.appendChild(instantiateField("input-field"));
 
-  // Get the substring of the id with the number (last character)
-  const row = +id.substring(id.length - 1);
-
-  // Create a new input-group div
-  const inputGroup = document.querySelector(`#field-row-${row}`);
-
-  // If this is not the first row, check if the number of input fields
-  // is less than in the first row. If so, add a new input field.
-  if (row === 1 || (row > 1 &&
-    inputGroup.querySelectorAll(".input-field")
-    .length < firstRowFields.length)) {
-    inputGroup.appendChild(instantiateField("input-field"));
-  }
-
-  firstRowWidth = document.querySelector("#field-row-1").offsetWidth;
-  firstRowFields = document.querySelectorAll("#field-row-1 > .input-field");
-  
-  root.style.setProperty("--r1width", firstRowWidth + "px");
-  root.style.setProperty("--r1cols", firstRowFields.length);
-
-  checkAddButton();
+  getLongestRow();
 };
 
 const createRow = () => {
-  row++;
-  const rowsGroup = document.querySelector(".new-rows-container");
+  numRows++;
+  const newRowsContainer = document.querySelector(".new-rows-container");
 
-  // Create a new input-group div
-  const vInputGroup = document.createElement("div");
-  vInputGroup.classList.add("input-group");
-  rowsGroup.appendChild(vInputGroup);
+  const newInputGroup = document.createElement("div");
+  newInputGroup.classList.add("input-group");
+  newRowsContainer.appendChild(newInputGroup);
 
-  // Add a new field-container div
-  const vFieldContainer = document.createElement("div");
-  vInputGroup.appendChild(instantiateField("variable-field"));
-  vInputGroup.appendChild(vFieldContainer);
-  vFieldContainer.classList.add("field-container");
-  vFieldContainer.id = `field-row-${row}`;
+  const newFieldContainer = document.createElement("div");
+  newFieldContainer.classList.add("field-container");
+  newFieldContainer.id = `field-row-${numRows}`;
 
-  // Add the input field
-  vFieldContainer.appendChild(instantiateField("input-field"));
+  newInputGroup.appendChild(instantiateField("variable-field"));
+  newInputGroup.appendChild(newFieldContainer);
 
-  // Copy button and add to input-group
+  newFieldContainer.appendChild(instantiateField("input-field"));
+
   copyButton = addButton.cloneNode(true);
-  copyButton.id = `btn-row-${row}`;
-  vInputGroup.appendChild(copyButton);
+  copyButton.id = `btn-row-${numRows}`;
+  newInputGroup.appendChild(copyButton);
 
-  // Add event listener to the copy button
   copyButton.addEventListener("click", function (event) {
     createField(event);
   });
 
-  checkAddButton();
-
+  getLongestRow();
 };
 
 addButton.addEventListener("click", function (event) {
@@ -84,26 +79,10 @@ addButton.addEventListener("click", function (event) {
 
 addRowButton.addEventListener("click", createRow);
 
-const checkAddButton = () => {
-  const rows = document.querySelectorAll(".field-container");
-  rows.forEach((row, idx) => {
-    if (idx > 0) {
-    const fields = row.querySelectorAll(".input-field");
-    const addButton = document.querySelector("#btn-row-" + (idx + 1));
-    if (fields.length < firstRowFields.length) {
-      addButton.style.visibility = "visible";
-    } else {
-      addButton.style.visibility = "hidden";
-    }
-  }
-  });
-};
-
 let rowsArr = [];
-// Iterate through the rows and create an array of arrays
 const createArray = () => {
-  const rows = document.querySelectorAll(".field-container");
-  rows.forEach((row, idx) => {
+  const allRows = document.querySelectorAll(".field-container");
+  allRows.forEach((row, idx) => {
     rowsArr[idx] = [];
     const fields = row.querySelectorAll(".input-field");
     fields.forEach((field, i) => {
@@ -127,9 +106,8 @@ const sendData = () => {
       let doc = parser.parseFromString(html, "text/html");
       let table = doc.querySelector("table");
       let header = table.querySelector("thead tr");
-      // Remove the existing headers
       while (header.firstChild) {
-        header.removeChild(header.firstChild);
+        header.removeChild(header.firstChild); // Remove default headers
       }
       let headers = document.querySelectorAll(".variable-field");
       headers.forEach((field, i) => {
@@ -142,12 +120,13 @@ const sendData = () => {
     })
 };
 
-// Update the array whenever an input field is changed
+// Update the table whenever a field is changed
 // needed for the first field as it is not created by the add button
-// todo: simplify this
 fields.forEach((field) => {
-  field.addEventListener("change", () => {
+  field.addEventListener("input", () => {
     createArray();
     sendData();
   });
 });
+
+getLongestRow();

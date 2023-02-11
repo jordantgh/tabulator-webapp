@@ -17,8 +17,9 @@ def process_data():
     values = request.get_json()['data']
     
     result = []
+    max_len = max([len(value) for value in values])
     # loop over the inner list indices
-    for i in range(len(values[0])):
+    for i in range(max_len):
         # create a new list of elements at the same inner list indices
         newlist = []
         for value in values:
