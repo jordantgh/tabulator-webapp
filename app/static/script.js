@@ -1,9 +1,12 @@
 let fields = document.querySelectorAll("input");
 let addButton = document.querySelector(".add-button");
 let addRowButton = document.querySelector(".add-row-button");
+const typeDropdown = document.querySelector(".type-dropdown");
 let root = document.querySelector(":root");
 let numRows = 1;
 let maxRowWidth = 0;
+let rowsArr = [];
+const newRowsContainer = document.querySelector(".new-rows-container");
 
 const getLongestRow = () => {
   const allRows = document.querySelectorAll(".field-container");
@@ -47,8 +50,6 @@ const createField = (event) => {
 
 const createRow = () => {
   numRows++;
-  const newRowsContainer = document.querySelector(".new-rows-container");
-
   const newInputGroup = document.createElement("div");
   newInputGroup.classList.add("input-group");
   newRowsContainer.appendChild(newInputGroup);
@@ -57,13 +58,17 @@ const createRow = () => {
   newFieldContainer.classList.add("field-container");
   newFieldContainer.id = `field-row-${numRows}`;
 
+  const dropdownCopy = typeDropdown.cloneNode(true);
+  dropdownCopy.id = `dropdown-${numRows}`;
+  
+  newInputGroup.appendChild(dropdownCopy);
   newInputGroup.appendChild(instantiateField("variable-field"));
   newInputGroup.appendChild(newFieldContainer);
 
   newFieldContainer.appendChild(instantiateField("input-field"));
 
-  copyButton = addButton.cloneNode(true);
-  copyButton.id = `btn-row-${numRows}`;
+  const copyButton = addButton.cloneNode(true);
+  copyButton.id = `add-btn-row-${numRows}`;
   newInputGroup.appendChild(copyButton);
 
   copyButton.addEventListener("click", function (event) {
@@ -79,7 +84,6 @@ addButton.addEventListener("click", function (event) {
 
 addRowButton.addEventListener("click", createRow);
 
-let rowsArr = [];
 const createArray = () => {
   const allRows = document.querySelectorAll(".field-container");
   allRows.forEach((row, idx) => {
